@@ -4,6 +4,9 @@ This script helps you find your most-liked YouTube comments by analyzing your Yo
 
 ## Setup Instructions
 
+YouTube Guide on running this:
+https://www.youtube.com/watch?v=gqMg1ld-Vu0&t=332s
+
 ### 1. Download Your YouTube Data
 1. Go to [Google Takeout](https://takeout.google.com/settings/takeout)
 2. Click "Deselect all" and then only select "YouTube and YouTube Music"
