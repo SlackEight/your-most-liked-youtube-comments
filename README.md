@@ -12,12 +12,11 @@ This script helps you find your most-liked YouTube comments by analyzing your Yo
 5. You might need to combine all the outputs into the same folder. We're only interested in the stuff stored at "Takeout/YouTube and YouTube Music/comments/"
 
 ### 2. Get a YouTube API Key
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select an existing one
-3. Enable the [YouTube Data API v3](https://console.cloud.google.com/marketplace/product/google/youtube.googleapis.com)
-4. Create credentials (API key)
-5. Copy your API key
-6. Edit the `most_liked_youtube_comments.py` script and replace the bit that says `"YOUR_API_KEY"` with the text you just copied.
+1. Make a [Google Cloud Console project](https://console.cloud.google.com/projectcreate)
+2. Enable the [YouTube Data API v3](https://console.cloud.google.com/marketplace/product/google/youtube.googleapis.com)
+3. Create credentials (API key)
+4. Copy your API key
+5. Edit the `most_liked_youtube_comments.py` script and replace the bit that says `"YOUR_API_KEY"` with the text you just copied.
 
 ### 3. Install Dependencies
 ```bash
