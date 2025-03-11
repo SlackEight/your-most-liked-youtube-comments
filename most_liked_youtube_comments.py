@@ -90,7 +90,9 @@ try:
             comment_data = {
                 line.split(cache_separator)[0]: {
                     'comment': fix_weird_text_stuff(line.split(cache_separator)[1].strip()),
-                    'like_count': line.split(cache_separator)[2].strip()
+                    'like_count': line.split(cache_separator)[2].strip(),
+                    'video_title': line.split(cache_separator)[3].strip(),
+                    'video_url': line.split(cache_separator)[4].strip()
                 } for line in f if line.strip()
             }
         except Exception as e:
@@ -114,20 +116,31 @@ with open('comments_cache.csv', 'a', encoding='utf-8') as cache_file:
             ).execute()
             
             if response['items']:
+                video_id = response['items'][0]['snippet']['videoId']
+                video_data = youtube.videos().list(
+                    part="snippet",
+                    id=video_id
+                ).execute()
+                video_title = video_data['items'][0]['snippet']['title']
+                video_url = f"https://www.youtube.com/watch?v={video_id}"
                 content = response['items'][0]['snippet']['topLevelComment']['snippet']['textDisplay'].strip().replace("\n", " ")
                 like_count = response['items'][0]['snippet']['topLevelComment']['snippet']['likeCount']
                 comment_data[comment_id] = {
                     'comment': content,
-                    'like_count': like_count
+                    'like_count': like_count,
+                    'video_title': video_title,
+                    'video_url': video_url
                 }
-                cache_file.write(f"{comment_id}{cache_separator}{content}{cache_separator}{like_count}\n")
+                cache_file.write(f"{comment_id}{cache_separator}{content}{cache_separator}{like_count}{cache_separator}{video_title}{cache_separator}{video_url}\n")
                 cache_file.flush()  # Ensure data is written immediately
             else:
                 comment_data[comment_id] = {
                     'comment': 'not found',
-                    'like_count': 0
+                    'like_count': 0,
+                    'video_title': 'not found',
+                    'video_url': 'not found'
                 }
-                cache_file.write(f"{comment_id}{cache_separator}not found{cache_separator}0\n")
+                cache_file.write(f"{comment_id}{cache_separator}not found{cache_separator}0{cache_separator}not found{cache_separator}not found\n")
                 cache_file.flush()
         except Exception as e:
             print(f"\nWarning: Error processing comment {comment_id}: {e}")
@@ -144,7 +157,9 @@ print("Done!")
 {
     "comment_id": {
         "comment": "comment content",
-        "like_count": "number of likes"
+        "like_count": "number of likes",
+        "video_title": "video title",
+        "video_url": "video url"
     }
 }
 
@@ -153,7 +168,7 @@ we want to save the JSON but write it so that the most liked comments are at the
 
 # Convert and sort the data
 sorted_comments = sorted(
-    [{"id": k, "comment": v['comment'], "like_count": int(v['like_count'])} 
+    [{"id": k, "comment": v['comment'], "like_count": int(v['like_count']), "video_title": v['video_title'], "video_url": v['video_url']} 
      for k, v in comment_data.items()],
     key=lambda x: x['like_count'],
     reverse=True
@@ -162,7 +177,7 @@ sorted_comments = sorted(
 # Write the final JSON output
 with open('most_liked_comments.json', 'w', encoding='utf-8') as f:
     json_entries = [
-        json.dumps({item['id']: {'comment': item['comment'], 'like_count': item['like_count']}}, 
+        json.dumps({item['id']: {'comment': item['comment'], 'like_count': item['like_count'], 'video_title': item['video_title'], 'video_url': item['video_url']}}, 
                   indent=4)[1:-2]
         for item in sorted_comments
     ]
